@@ -85,7 +85,8 @@ export default {
   methods: {
     async getIngredients() {
       const req = await fetch(
-        "https://makeburger-api.onrender.com/ingredientes"
+        // "https://makeburger-api.onrender.com/ingredientes"
+        "http://localhost:3000/ingredientes"
       );
       const data = await req.json();
 
@@ -106,11 +107,15 @@ export default {
 
       const dataJson = JSON.stringify(data);
 
-      const req = await fetch("https://makeburger-api.onrender.com/burgers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: dataJson
-      });
+      const req = await fetch(
+        // "https://makeburger-api.onrender.com/burgers"
+        "http://localhost:3000/burgers",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: dataJson
+        }
+      );
 
       const res = await req.json();
 

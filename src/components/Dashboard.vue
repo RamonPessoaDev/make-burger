@@ -66,7 +66,10 @@ export default {
   },
   methods: {
     async getOrders() {
-      const req = await fetch("https://makeburger-api.onrender.com/burgers");
+      const req = await fetch(
+        // "https://makeburger-api.onrender.com/burgers"
+        "http://localhost:3000/burgers"
+      );
 
       const data = await req.json();
 
@@ -76,7 +79,10 @@ export default {
       this.getStatus();
     },
     async getStatus() {
-      const req = await fetch("https://makeburger-api.onrender.com/status");
+      const req = await fetch(
+        // "https://makeburger-api.onrender.com/status"
+        "http://localhost:3000/status"
+      );
 
       const data = await req.json();
 
@@ -84,7 +90,8 @@ export default {
     },
     async deleteBurger(id) {
       const req = await fetch(
-        `https://makeburger-api.onrender.com/burgers/${id}`,
+        // `https://makeburger-api.onrender.com/burgers/${id}`
+        `http://localhost:3000/burgers/${id}`,
         {
           method: "DELETE"
         }
@@ -106,7 +113,8 @@ export default {
       const dataJson = JSON.stringify({ status: option });
 
       const req = await fetch(
-        `https://makeburger-api.onrender.com/burgers/${id}`,
+        // `https://makeburger-api.onrender.com/burgers/${id}`
+        `http://localhost:3000/burgers/${id}`,
         {
           //Como se fosse o UPDATE, mas atualiza apenas o que enviamos, que nesse caso é o status, as outras informações não são alteradas
           method: "PATCH",
