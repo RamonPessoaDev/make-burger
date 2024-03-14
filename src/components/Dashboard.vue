@@ -54,6 +54,8 @@
 <script>
 import Message from "./Message.vue";
 
+const URL = "http://localhost:3002";
+
 export default {
   name: "Dashboard",
   data() {
@@ -68,7 +70,7 @@ export default {
     async getOrders() {
       const req = await fetch(
         // "https://makeburger-api.onrender.com/burgers"
-        "http://localhost:3000/burgers"
+        `${URL}/burgers`
       );
 
       const data = await req.json();
@@ -81,7 +83,7 @@ export default {
     async getStatus() {
       const req = await fetch(
         // "https://makeburger-api.onrender.com/status"
-        "http://localhost:3000/status"
+        `${URL}/status`
       );
 
       const data = await req.json();
@@ -91,7 +93,7 @@ export default {
     async deleteBurger(id) {
       const req = await fetch(
         // `https://makeburger-api.onrender.com/burgers/${id}`
-        `http://localhost:3000/burgers/${id}`,
+        `${URL}/burgers/${id}`,
         {
           method: "DELETE"
         }
@@ -114,7 +116,7 @@ export default {
 
       const req = await fetch(
         // `https://makeburger-api.onrender.com/burgers/${id}`
-        `http://localhost:3000/burgers/${id}`,
+        `${URL}/burgers/${id}`,
         {
           //Como se fosse o UPDATE, mas atualiza apenas o que enviamos, que nesse caso é o status, as outras informações não são alteradas
           method: "PATCH",

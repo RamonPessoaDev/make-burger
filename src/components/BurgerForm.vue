@@ -19,7 +19,12 @@
           <label for="pao">Escolha o pão:</label>
           <select name="pao" id="pao" v-model="pao">
             <option value="" selected disabled>Selecione o seu pão</option>
-            <option v-for="pao in paes" :key="pao.id" :value="pao.tipo">
+            <option
+              v-if="paes"
+              v-for="pao in paes"
+              :key="pao.id"
+              :value="pao.tipo"
+            >
               {{ pao.tipo }}
             </option>
           </select>
@@ -66,6 +71,8 @@
 <script>
 import Message from "./Message.vue";
 
+const URL = "http://localhost:3002";
+
 export default {
   name: "BurgerForm",
   data() {
@@ -86,7 +93,7 @@ export default {
     async getIngredients() {
       const req = await fetch(
         // "https://makeburger-api.onrender.com/ingredientes"
-        "http://localhost:3000/ingredientes"
+        `${URL}/ingredientes`
       );
       const data = await req.json();
 
@@ -95,6 +102,14 @@ export default {
       this.opcionaisdata = data.opcionais;
     },
     async createBurger(e) {
+      const isEmptyFields =
+        !this.nome || !this.carne || !this.pao || this.opcionais.length === 0;
+
+      if (isEmptyFields) {
+        this.msg = "Por favor, preencha todos os campos!";
+        setTimeout(() => (this.msg = ""), 3000);
+        return;
+      }
       e.preventDefault();
 
       const data = {
@@ -109,7 +124,7 @@ export default {
 
       const req = await fetch(
         // "https://makeburger-api.onrender.com/burgers"
-        "http://localhost:3000/burgers",
+        `${URL}/burgers`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
