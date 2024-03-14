@@ -54,7 +54,7 @@
 <script>
 import Message from "./Message.vue";
 
-const URL = "http://localhost:3002";
+const URL = "http://localhost:3000";
 
 export default {
   name: "Dashboard",
