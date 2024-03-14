@@ -54,7 +54,7 @@
 <script>
 import Message from "./Message.vue";
 
-const URL = "https://makeburger-api.onrender.com";
+const URL = "http://localhost:3000";
 
 export default {
   name: "Dashboard",
