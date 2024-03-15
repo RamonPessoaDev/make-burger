@@ -91,24 +91,39 @@ export default {
       this.status = data;
     },
     async deleteBurger(id) {
-      const req = await fetch(
-        // `https://makeburger-api.onrender.com/burgers/${id}`
-        `${URL}/burgers/${id}`,
-        {
+      try {
+        const req = await fetch(`${URL}/burgers/${id}`, {
           method: "DELETE"
+        });
+
+        if (!req.ok) {
+          throw new Error("Erro ao deletar o pedido");
         }
-      );
 
-      const res = await req.json();
+        // Atualiza a mensagem de confirmação, independentemente da resposta
+        this.msg = `Pedido Nº <strong>${id}</strong> removido com sucesso!`;
 
-      this.msg = `Pedido Nº <strong>${res.id}</strong> removido com sucesso!`;
+        // Limpar msg depois de 3seg
+        setTimeout(() => (this.msg = ""), 3000);
 
-      //Limpar msg depois de 3seg
-      setTimeout(() => (this.msg = ""), 3000);
+        this.$nextTick(() => {
+          const msgContainer = document.querySelector(".msg-container");
+          if (msgContainer) {
+            // Calcula a posição do topo do elemento .msg-container
+            const topPosition = msgContainer.offsetTop;
+            // Usa window.scrollTo para rolar a página até a posição calculada
+            window.scrollTo({ top: topPosition, behavior: "smooth" });
+          }
+        });
 
-      //Força uma atualização do sistema por meio do backend
-      this.getOrders();
+        // Força uma atualização do sistema por meio do backend
+        this.getOrders();
+      } catch (error) {
+        console.error("Erro ao deletar o pedido:", error);
+        this.msg = "Erro ao deletar o pedido. Por favor, tente novamente.";
+      }
     },
+
     async updateBurger(event, id) {
       const option = event.target.value;
 

@@ -91,15 +91,16 @@ export default {
   },
   methods: {
     async getIngredients() {
-      const req = await fetch(
-        // "https://makeburger-api.onrender.com/ingredientes"
-        `${URL}/ingredientes`
-      );
-      const data = await req.json();
-
-      this.paes = data.paes;
-      this.carnes = data.carnes;
-      this.opcionaisdata = data.opcionais;
+      try {
+        const req = await fetch(`${URL}/ingredientes`);
+        const data = await req.json();
+        this.paes = data.paes;
+        this.carnes = data.carnes;
+        this.opcionaisdata = data.opcionais;
+      } catch (error) {
+        console.error("Error fetching ingredients:", error);
+        this.msg = "Error fetching ingredients.";
+      }
     },
     async createBurger(e) {
       const isEmptyFields =
