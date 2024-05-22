@@ -52,9 +52,10 @@
 </template>
 
 <script>
+import axios from "axios";
 import Message from "./Message.vue";
 
-const URL = "http://localhost:3000";
+const URL = "https://makeburger-api.onrender.com";
 
 export default {
   name: "Dashboard",
@@ -68,35 +69,22 @@ export default {
   },
   methods: {
     async getOrders() {
-      const req = await fetch(
-        // "https://makeburger-api.onrender.com/burgers"
-        `${URL}/burgers`
-      );
+      const req = await axios.get(`${URL}/burgers`);
 
-      const data = await req.json();
+      this.burgers = req.data;
 
-      this.burgers = data;
-
-      //Resgata os status de pedidos
       this.getStatus();
     },
     async getStatus() {
-      const req = await fetch(
-        // "https://makeburger-api.onrender.com/status"
-        `${URL}/status`
-      );
+      const req = await axios.get(`${URL}/status`);
 
-      const data = await req.json();
-
-      this.status = data;
+      this.status = req.data;
     },
     async deleteBurger(id) {
       try {
-        const req = await fetch(`${URL}/burgers/${id}`, {
-          method: "DELETE"
-        });
+        const req = await axios.delete(`${URL}/burgers/${id}`);
 
-        if (!req.ok) {
+        if (req.status !== 200) {
           throw new Error("Erro ao deletar o pedido");
         }
 
@@ -129,34 +117,37 @@ export default {
 
       const dataJson = JSON.stringify({ status: option });
 
-      const req = await fetch(
-        // `https://makeburger-api.onrender.com/burgers/${id}`
-        `${URL}/burgers/${id}`,
-        {
-          //Como se fosse o UPDATE, mas atualiza apenas o que enviamos, que nesse caso é o status, as outras informações não são alteradas
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: dataJson
-        }
-      );
+      try {
+        const req = await axios.patch(
+          `${URL}/burgers/${id}`,
+          { status: option },
+          {
+            //Como se fosse o UPDATE, mas atualiza apenas o que enviamos, que nesse caso é o status, as outras informações não são alteradas
+            headers: { "Content-Type": "application/json" }
+          }
+        );
 
-      const res = await req.json();
+        const res = req.data;
 
-      this.msg = `O pedido Nº <strong>${res.id}</strong> foi atualizado para: <strong>${res.status}</strong>`;
+        this.msg = `O pedido Nº <strong>${res.id}</strong> foi atualizado para: <strong>${res.status}</strong>`;
 
-      //Limpar msg depois de 3seg
-      setTimeout(() => (this.msg = ""), 3000);
+        //Limpar msg depois de 3seg
+        setTimeout(() => (this.msg = ""), 3000);
 
-      this.$nextTick(() => {
-        const msgContainer = document.querySelector(".msg-container");
-        if (msgContainer) {
-          // Calcula a posição do topo do elemento .msg-container
-          const topPosition = msgContainer.offsetTop;
-          // msgContainer.getBoundingClientRect().top + window.scrollY;
-          // Usa window.scrollTo para rolar a página até a posição calculada
-          window.scrollTo({ top: topPosition, behavior: "smooth" });
-        }
-      });
+        this.$nextTick(() => {
+          const msgContainer = document.querySelector(".msg-container");
+          if (msgContainer) {
+            // Calcula a posição do topo do elemento .msg-container
+            const topPosition = msgContainer.offsetTop;
+            // msgContainer.getBoundingClientRect().top + window.scrollY;
+            // Usa window.scrollTo para rolar a página até a posição calculada
+            window.scrollTo({ top: topPosition, behavior: "smooth" });
+          }
+        });
+      } catch (error) {
+        console.error("Erro ao atualizar o pedido:", error);
+        this.msg = "Erro ao atualizar o pedido. Por favor, tente novamente.";
+      }
     }
   },
   mounted() {

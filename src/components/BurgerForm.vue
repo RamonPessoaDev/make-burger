@@ -69,9 +69,10 @@
 </template>
 
 <script>
+import axios from "axios";
 import Message from "./Message.vue";
 
-const URL = "http://localhost:3000";
+const URL = "https://makeburger-api.onrender.com";
 
 export default {
   name: "BurgerForm",
@@ -92,11 +93,11 @@ export default {
   methods: {
     async getIngredients() {
       try {
-        const req = await fetch(`${URL}/ingredientes`);
-        const data = await req.json();
-        this.paes = data.paes;
-        this.carnes = data.carnes;
-        this.opcionaisdata = data.opcionais;
+        const req = await axios.get(`${URL}/ingredientes`);
+        this.paes = req.data.ingredientes.paes;
+        this.carnes = req.data.ingredientes.carnes;
+        this.opcionaisdata = req.data.ingredientes.opcionais;
+        console.log(JSON.stringify(req.data.ingredientes.paes));
       } catch (error) {
         console.error("Error fetching ingredients:", error);
         this.msg = "Error fetching ingredients.";
@@ -121,32 +122,65 @@ export default {
         status: "Solicitado"
       };
 
-      const dataJson = JSON.stringify(data);
-
-      const req = await fetch(
-        // "https://makeburger-api.onrender.com/burgers"
-        `${URL}/burgers`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: dataJson
-        }
-      );
-
-      const res = await req.json();
-
-      //Colocar msg de sistema
-      this.msg = `Pedido Nº <strong>${res.id}</strong> realizado com sucesso!`;
-
-      //Limpar msg depois de 3seg
-      setTimeout(() => (this.msg = ""), 3000);
-
-      // Limpa os campos
-      this.nome = "";
-      this.carne = "";
-      this.pao = "";
-      this.opcionais = [];
+      try {
+        const response = await axios.post(`${URL}/burgers`, data);
+        this.msg = `Pedido Nº <strong>${response.data.id}</strong> realizado com sucesso!`;
+        setTimeout(() => (this.msg = ""), 3000);
+        this.nome = "";
+        this.carne = "";
+        this.pao = "";
+        this.opcionais = [];
+      } catch (error) {
+        console.error("Error creating burger:", error);
+        this.msg = "Error creating burger.";
+      }
     }
+
+    // async createBurger(e) {
+    //   const isEmptyFields =
+    //     !this.nome || !this.carne || !this.pao || this.opcionais.length === 0;
+
+    //   if (isEmptyFields) {
+    //     this.msg = "Por favor, preencha todos os campos!";
+    //     setTimeout(() => (this.msg = ""), 3000);
+    //     return;
+    //   }
+    //   e.preventDefault();
+
+    //   const data = {
+    //     nome: this.nome,
+    //     carne: this.carne,
+    //     pao: this.pao,
+    //     opcionais: Array.from(this.opcionais),
+    //     status: "Solicitado"
+    //   };
+
+    //   const dataJson = JSON.stringify(data);
+
+    //   const req = await fetch(
+    //     // "https://makeburger-api.onrender.com/burgers"
+    //     `${URL}/burgers`,
+    //     {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: dataJson
+    //     }
+    //   );
+
+    //   const res = await req.json();
+
+    //   //Colocar msg de sistema
+    //   this.msg = `Pedido Nº <strong>${res.id}</strong> realizado com sucesso!`;
+
+    //   //Limpar msg depois de 3seg
+    //   setTimeout(() => (this.msg = ""), 3000);
+
+    //   // Limpa os campos
+    //   this.nome = "";
+    //   this.carne = "";
+    //   this.pao = "";
+    //   this.opcionais = [];
+    // }
   },
   mounted() {
     this.getIngredients();
